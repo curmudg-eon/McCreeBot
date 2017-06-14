@@ -6,10 +6,22 @@ const prefix = '~';
 
 client.login('MzIyNDM4MzcxODQ4ODgwMTMw.DByWrQ.vZb-9j5zfKszPU4clvOrCfpHSmw');
 
+function permissionCheck (msg) {
+  if ((msg.member.voiceChannel)&&(msg.member.hasPermission('MANAGE_CHANNELS', 'checkAdmin'))) {
+    return true;
+  } /*else if (!msg.member.hasPermission('MANAGE_CHANNELS', 'checkAdmin'))  {
+    msg.reply('Who\'re you?');
+    return false;
+  } else if (!msg.member.voiceChannel) {
+    msg.reply('What\'s that? Can\'t hear yah.');
+  } */
+  else  {return false;}
+}
+
+
 function highNoon (msg) {
-  if (!msg.member.voiceChannel)  {
-    msg.reply('I can\'t tell you the time if you don\'t let me.');
-    return; }
+
+
 
   var targets = msg.member.voiceChannel.members.array(); //there has to be a better way to do this
   msg.member.voiceChannel.join()
@@ -21,12 +33,14 @@ function highNoon (msg) {
         msg.channel.send('The members are' + targets);
 
         for (var i = 0, len = targets.length; i < len; i++) {
-          targets[i].setMute(false);
-          targets[i].setDeaf(false);
+          targets[i].setMute(true);
+          targets[i].setDeaf(true);
         }
       });
+
     })
     .catch(console.log);
+
 }
 
 function revive(msg) {
@@ -34,8 +48,21 @@ function revive(msg) {
   msg.member.setDeaf(false);
 }
 
-function roulette(msg) {
+function reviveAll(msg) {
+  targets = msg.member.voiceChannel.members.array();
 
+  for (var i = 0, len = targets.length; i < len; i++) {
+    targets[i].setMute(false);
+    targets[i].setDeaf(false);
+    msg.member.voiceChannel.join()
+      .then(connection => {
+        const dispatcher = connection.playFile('./herosNeverDie.ogg');
+      });
+  }
+}
+
+function roulette(msg) {
+  msg.reply('spinnin\'');
 }
 
 function flashbang(msg) {
@@ -61,7 +88,11 @@ client.on('message', message => {
     revive(message);
   }
 
-  if ((message.member.voiceChannel)&&(message.member.hasPermission('MANAGE_CHANNELS', 'checkAdmin'))) {
+  if (message.content === prefix + 'revive all') {
+    reviveAll(message);
+  }
+
+  if (permissionCheck(message) === true) {
   if (message.content === prefix + 'time'){
     highNoon(message);} //Deafen or afk all members in a voiceChannel
 
@@ -70,8 +101,5 @@ client.on('message', message => {
 
   if (message.content === prefix + 'flashbang') {
     flashbang(message);} //Mute
-  } else if (!message.member.voiceChannel){
-      message.reply('What\'s that? Can\'t hear ya.');
-  } else if (!(message.member.voiceChannel)&&(message.member.hasPermission('MANAGE_CHANNELS', 'checkAdmin'))) {
-      message.reply('Who\'re you?'); }
+  }
 });
