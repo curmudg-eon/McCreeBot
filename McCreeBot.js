@@ -44,18 +44,20 @@ function revive(msg) {
 }
 
 function reviveAll(msg) {
+msg.member.voiceChannel.join()
+  .then(connection => {
   var targets = msg.member.voiceChannel.members.array();
   for (var i = 0, len = targets.length; i < len; i++) {
     targets[i].setMute(false);
     targets[i].setDeaf(false);
-    msg.member.voiceChannel.join()
-      .then(connection => {
+    targets[i].createDM();
+    targets[i].send('You just been shot dead. ~revive when you\'re ready to respawn.');
+  }
         const dispatcher = connection.playFile('./herosNeverDie.ogg');
         dispatcher.on('end', () => {
           msg.member.voiceChannel.leave();
         });
       });
-  }
 }
 
 function roulette(msg) {
@@ -89,7 +91,7 @@ function flashbang(msg) {
 
 function commands(msg) {
   msg.member.createDM();
-  msg.member.send('Horse cock');
+  msg.member.send('Basic Commands: \n ~help\n ~revive\n\nManage Channels Commands:\n ~time\n ~spin\n ~flashbang\n ~revive all');
 }
 
 client.on('ready', () => {
@@ -109,13 +111,13 @@ client.on('message', message => {
     revive(message);
   }
 
-  if (message.content === prefix + 'revive all') {
-    reviveAll(message);
-  }
-
   if (permissionCheck(message) === true) {
   if (message.content === prefix + 'time'){
     highNoon(message);} //Deafen all members in a voiceChannel
+
+  if (message.content === prefix + 'revive all') {
+    reviveAll(message);
+  }
 
   if (message.content === prefix + 'spin') {
     roulette(message);} //Deafen a single random member in the voiceChannel
