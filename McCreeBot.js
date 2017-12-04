@@ -4,7 +4,7 @@ const prefix = '~';
 
 
 
-client.login('MzIyNDM4MzcxODQ4ODgwMTMw.DByWrQ.vZb-9j5zfKszPU4clvOrCfpHSmw');
+client.login('');
 
 function permissionCheck (msg) {
   if ((msg.member.voiceChannel)&&(msg.member.hasPermission('MANAGE_CHANNELS', 'checkAdmin'))) 
